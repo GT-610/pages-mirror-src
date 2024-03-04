@@ -4,19 +4,6 @@
   
   
   <entry>
-    <title>欢迎来到 GT610 的小仓库！</title>
-    <link href="/2024/02/29/hello-world/"/>
-    <url>/2024/02/29/hello-world/</url>
-    
-    <content type="html"><![CDATA[<p>总觉得有时候得记录点什么，于是就开了这个小博客，不管有没有人看，我会坚持写下去的。</p><p>我是 <code>GT610</code>，也叫 <code>二次率战术核显</code>，也有人叫我 <code>核显</code>，不过这个都不重要啦。</p><p>不定期发一些技术向的教程，或者随便吐槽两句。</p><p>就这样。</p>]]></content>
-    
-    
-    
-  </entry>
-  
-  
-  
-  <entry>
     <title>C++ 动态规划 学习记录</title>
     <link href="/2024/02/29/dp-cpp/"/>
     <url>/2024/02/29/dp-cpp/</url>
@@ -217,6 +204,19 @@
       <tag>博客</tag>
       
     </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>欢迎来到 GT610 的小仓库！</title>
+    <link href="/2024/02/01/hello-world/"/>
+    <url>/2024/02/01/hello-world/</url>
+    
+    <content type="html"><![CDATA[<p>总觉得有时候得记录点什么，于是就开了这个小博客，不管有没有人看，我会坚持写下去的。</p><p>我是 <code>GT610</code>，也叫 <code>二次率战术核显</code>，也有人叫我 <code>核显</code>，不过这个都不重要啦。</p><p>不定期发一些技术向的教程，或者随便吐槽两句。</p><p>就这样。</p>]]></content>
+    
+    
     
   </entry>
   

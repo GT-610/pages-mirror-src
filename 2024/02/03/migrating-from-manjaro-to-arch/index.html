@@ -1,0 +1,828 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="GT610">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="直接切换存在一定的“滚挂”风险，操作前建议做好重装系统的准备。                          虽然本教程的方法也可以直接从 Arch Linux 切换到 Manjaro，但我建议不要这样做！ Arch Linux 的软件包普遍比 Manjaro 新，从 Arch 切换到 Manjaro 很可能会因为版本问题导致依赖冲突，增加“滚挂”风险！">
+<meta property="og:type" content="article">
+<meta property="og:title" content="不重装系统，直接从 Manjaro 切换到 Arch Linux">
+<meta property="og:url" content="https://gt610.codeberg.page/2024/02/03/migrating-from-manjaro-to-arch/index.html">
+<meta property="og:site_name" content="GT610&#39;s repository">
+<meta property="og:description" content="直接切换存在一定的“滚挂”风险，操作前建议做好重装系统的准备。                          虽然本教程的方法也可以直接从 Arch Linux 切换到 Manjaro，但我建议不要这样做！ Arch Linux 的软件包普遍比 Manjaro 新，从 Arch 切换到 Manjaro 很可能会因为版本问题导致依赖冲突，增加“滚挂”风险！">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gt610.codeberg.page/2024/02/03/migrating-from-manjaro-to-arch/manjaro-initial.png">
+<meta property="og:image" content="https://gt610.codeberg.page/2024/02/03/migrating-from-manjaro-to-arch/arch-finish.png">
+<meta property="og:image" content="https://gt610.codeberg.page/2024/02/03/migrating-from-manjaro-to-arch/zsh-conf-neofetch.png">
+<meta property="article:published_time" content="2024-02-03T05:04:03.000Z">
+<meta property="article:modified_time" content="2024-02-29T06:05:38.257Z">
+<meta property="article:author" content="GT610">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="GNU&#x2F;Linux">
+<meta property="article:tag" content="Manjaro">
+<meta property="article:tag" content="Arch Linux">
+<meta property="article:tag" content="系统切换">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://gt610.codeberg.page/2024/02/03/migrating-from-manjaro-to-arch/manjaro-initial.png">
+  
+  
+  
+  <title>不重装系统，直接从 Manjaro 切换到 Arch Linux - GT610&#39;s repository</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_4430671_lkk4qpja1mj.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"gt610.codeberg.page","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>GT610&#39;s repository</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/banners/migrating-from-manjaro-to-arch.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="不重装系统，直接从 Manjaro 切换到 Arch Linux"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-02-03 13:04" pubdate>
+          2024年2月3日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          18 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">不重装系统，直接从 Manjaro 切换到 Arch Linux</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <div class="note note-warning">
+            <p>直接切换存在一定的“滚挂”风险，操作前建议做好重装系统的准备。</p>
+          </div>
+
+<div class="note note-danger">
+            <p>虽然本教程的方法也可以直接从 Arch Linux 切换到 Manjaro，但我建议<strong>不要这样做！</strong> Arch Linux 的软件包普遍比 Manjaro 新，从 Arch 切换到 Manjaro 很可能会因为版本问题导致依赖冲突，增加“滚挂”风险！</p>
+          </div>
+
+<p><del>众所周知</del>，Manjaro 是基于 Arch Linux 的一个发行版，但是 Manjaro 的大部分软件包的版本要低于 Arch Linux，使得 Manjaro 在获得近似 Arch 的优秀体验的同时，也保持良好的稳定性。</p>
+<p>不过有时候总想尝试一下 Arch，重装系统又很麻烦，考虑到 Manjaro 和 Arch 的东西很接近 <del>（不像 Ubuntu 瞎改 Debian 还加屎山进去）</del>，直接迁移是一个比较方便快捷的选择。</p>
+<p>演示环境为一个全新安装的 Manjaro + KDE 虚拟机。</p>
+<p><img src="/2024/02/03/migrating-from-manjaro-to-arch/manjaro-initial.png" srcset="/img/loading.gif" lazyload alt="Manjaro 初始环境"></p>
+<div class="note note-danger">
+            <p>操作结束前，<strong>不要重启系统</strong>！</p>
+          </div>
+
+<h2 id="更改-pacman-设置"><a href="#更改-pacman-设置" class="headerlink" title="更改 pacman 设置"></a>更改 <code>pacman</code> 设置</h2><p>编辑 <code>/etc/pacman.conf</code>，去除所有与 <code>manjaro</code> 相关的内容。</p>
+<p>要改动的地方大致有以下部分，其他地方最好也检查一下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs conf"># 18 行<br>HoldPkg      = pacman glibc<br><br># 20 行 SyncFirst 注释掉<br># SyncFirst    = archlinux-keyring<br></code></pre></td></tr></table></figure>
+
+<h2 id="更换-Arch-Linux-镜像源"><a href="#更换-Arch-Linux-镜像源" class="headerlink" title="更换 Arch Linux 镜像源"></a>更换 Arch Linux 镜像源</h2><p>编辑 <code>/etc/pacman.d/mirrorlist</code>，将 Manjaro 镜像源删除，替换为 Arch Linux 对应的镜像源地址。我这里选择了科大和上交的源：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs conf">Server = https://mirrors.ustc.edu.cn/archlinux/$repo/os/$arch<br>Server = https://mirror.sjtu.edu.cn/archlinux/$repo/os/$arch<br></code></pre></td></tr></table></figure>
+
+<p>然后同步数据库，但需要注意，这个时候<strong>不要更新软件</strong>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo pacman -Syy<br></code></pre></td></tr></table></figure>
+
+<h2 id="微调软件配置"><a href="#微调软件配置" class="headerlink" title="微调软件配置"></a>微调软件配置</h2><p>虽然 Manjaro 基于 Arch，但在一些关键软件包上还是有区别的，针对这些软件包我们全部需要调整。</p>
+<h3 id="Bash"><a href="#Bash" class="headerlink" title="Bash"></a>Bash</h3><p>Manjaro 和 Arch Linux 的 Bash 封装不同，Manjaro 将 Bash 本身与 bash 的配置文件 <code>bashrc</code> 封装成了 <code>bash</code> 和 <code>bashrc-manjaro</code> 两个软件包，而 Arch 则封装为一个包 <code>bash</code> 。并且，Manjaro 的 <code>bash</code> 包依赖于 <code>bashrc-manjaro</code>，所以需要对现有 Manjaro 文件系统进行微调。</p>
+<p>移除旧的 <code>bashrc</code> 文件，然后重新安装 <code>bash</code>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo <span class="hljs-built_in">mv</span> /etc/bash.bashrc /etc/bash.bashrc.old<br>sudo <span class="hljs-built_in">mv</span> /etc/skel/.bashrc /etc/skel/.bashrc.old<br>sudo pacman -Sy bash<br></code></pre></td></tr></table></figure>
+
+<p>安装成功后，卸载 <code>bashrc-manjaro</code> 包。</p>
+<div class="note note-warning">
+            <p>卸载 Manjaro 相关包时，避免使用 <code>-Rs</code>、<code>-Rsn</code>、<code>-Rsc</code>、<code>-Rsnc</code> 等带有 <code>s</code> 和 <code>c</code> 的参数，防止破坏系统组件。</p>
+          </div>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo pacman -Rn bashrc-manjaro<br></code></pre></td></tr></table></figure>
+<h3 id="Linux-内核"><a href="#Linux-内核" class="headerlink" title="Linux 内核"></a>Linux 内核</h3><p>Linux 内核，Arch 官方始终只提供最新版本 <code>linux</code> 和长期支持版本 <code>linux-lts</code>，但是 Manjaro 提供了多个不同的版本 <code>linux-版本号</code>。为了保险，我们先安装 Arch Linux 的 <code>linux</code> 内核，再卸载 Manjaro 的内核。</p>
+<p>先查找 Manjaro 内核的版本：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo pacman -Qsq linux | grep linux<br></code></pre></td></tr></table></figure>
+
+<p>然后找到 <code>linux**</code> 这样一个包，比如 <code>linux66</code>、<code>linux515</code> 之类的。</p>
+<p>这个包后面的数字，就是版本号。记下包名，卸载 Manjaro 的 Linux 内核的时候，要全部卸载。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo pacman -S linux linux-headers<br>sudo pacman -Rn linux66 <span class="hljs-comment"># 填写刚刚记下的包名</span><br>sudo pacman -S linux-firmware<br></code></pre></td></tr></table></figure>
+
+<p>如果有对应的 <code>headers</code> 也要全部卸载：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo pacman -Rn linux66-headers<br><span class="hljs-comment"># 如果有就卸载，没有就跳过</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="pacman-mirrors"><a href="#pacman-mirrors" class="headerlink" title="pacman-mirrors"></a><code>pacman-mirrors</code></h3><p><code>pacman-mirrors</code> 是 Manjaro 自己的镜像配置文件，Arch Linux 只使用 <code>pacman-mirrorlist</code>。由于 <code>pacman-mirrors</code> 和 Manjaro 的 Pacman 绑定，所以这一步我们需要先安装 Arch Linux 的 Pacman，然后通过破坏依赖的方式移除 <code>pacman-mirrors</code>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo pacman -S pacman<br>sudo pacman -Rdd pacman-mirrors libpamac python-manjaro-sdk<br>sudo pacman -Rn $(pacman -Qsq pamac)<br></code></pre></td></tr></table></figure>
+
+<h3 id="Manjaro-专属软件"><a href="#Manjaro-专属软件" class="headerlink" title="Manjaro 专属软件"></a>Manjaro 专属软件</h3><p>Manjaro 添加了自己专属的一些软件，我们也全部卸载，防止与 Arch Linux 冲突。</p>
+<p>由于部分软件与系统组件深度绑定，为防止破坏系统组件，我们先安装部分 Arch Linux 的系统组件。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># base 依赖一个 manjaro 软件包，先换成 Arch 的</span><br>sudo pacman -S base<br><br><span class="hljs-comment"># -Qmq 参数用于查找不在软件源里的已安装的包</span><br>sudo pacman -Rn $(pacman -Qmq | grep manjaro)<br>sudo pacman -Rn $(pacman -Qmq | grep mhwd)<br>sudo pacman -Rn web-installer-url-handler<br></code></pre></td></tr></table></figure>
+
+
+
+<div class="note note-danger">
+            <p>切记<strong>不要使用 <code>-Qsq</code> 代替 <code>-Qmq</code>！</strong></p><p><code>-Qsq</code> 的结果包含 <code>filesystem</code>，这个包是系统必备的，待会重新安装 Arch 软件包的时候会<strong>自动替换为 Arch 版本</strong>。这个包能被搜到是因为描述中包含 <code>Manjaro</code>，而它<strong>不是 Manjaro 独有的</strong>！</p>
+          </div>
+
+<p><code>mhwd</code> 是 Manjaro 检测硬件并自动安装驱动的一个库，<del>既然你都用 Arch 了，难道还不能自己装驱动吗？</del></p>
+<p>系统中可能还有 Manjaro 软件的残留，但我不建议现在一个一个查找删除，而是等到 Arch 软件包安装好之后再按需删除。</p>
+<h2 id="安装-Arch-Linux-软件包"><a href="#安装-Arch-Linux-软件包" class="headerlink" title="安装 Arch Linux 软件包"></a>安装 Arch Linux 软件包</h2><p>我们先将系统中 Manjaro 的软件包替换为对应的 Arch Linux 软件包。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 清除以前下载的 Manjaro 的软件包</span><br>sudo pacman -Scc<br><span class="hljs-comment"># 重新安装所有已安装的库内软件包</span><br>sudo pacman -Syu $(pacman -Qnq)<br></code></pre></td></tr></table></figure>
+
+<h2 id="修改-GRUB-主题"><a href="#修改-GRUB-主题" class="headerlink" title="修改 GRUB 主题"></a>修改 GRUB 主题</h2><p>Manjaro 默认的 GRUB 使用的是定制主题，我们已经删掉了，对应的配置也需要移除。</p>
+<p>编辑 <code>/etc/default/grub</code>，修改为其他主题，或者注释掉使用默认界面：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs conf"># 搜索 THEME 即可，一般在 47 行上下<br># GRUB_THEME=&quot;/usr/share/grub/themes/manjaro/theme.txt&quot;<br></code></pre></td></tr></table></figure>
+
+<p>我没有使用主题，直接注释掉了。</p>
+<h2 id="Fcitx-中文输入法"><a href="#Fcitx-中文输入法" class="headerlink" title="Fcitx 中文输入法"></a>Fcitx 中文输入法</h2><p>Manjaro 通过依赖的方式，在安装 Fcitx5 的时候向 <code>/etc/xdg</code> 添加 <code>fcitx5</code> 文件夹以及配置文件，自动启用了 <code>Fcitx5</code> 在软件中的输入功能（软件包<code>manjaro-asian-input-support-fcitx5</code>），因此，Manjaro 安装 <code>Fcitx5</code> 后开箱即用，不需要配置。</p>
+<p>但是 Arch Linux 软件源没有这一软件包，应当手动对 Fcitx5 进行配置。</p>
+<p>编辑 <code>/etc/environment</code>，加入：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs conf">GTK_IM_MODULE=fcitx<br>QT_IM_MODULE=fcitx<br>XMODIFIERS=@im=fcitx<br>INPUT_METHOD=fcitx<br>SDL_IM_MODULE=fcitx<br>GLFW_IM_MODULE=ibus<br></code></pre></td></tr></table></figure>
+
+<p>注意 <code>GLFW_IM_MODULE=ibus</code> 的 <code>ibus</code> 不能修改为其他的（兼容性问题）。然后保存。</p>
+<h2 id="Zsh"><a href="#Zsh" class="headerlink" title="Zsh"></a>Zsh</h2><p>Manjaro 默认使用 Zsh 并添加了很多自己的配置，这些配置被打包成以 <code>manjaro</code> 开头的包，由于我们已经删掉了，因此需要重新配置。</p>
+<p>当然不配置也能用，只不过没有原来 Manjaro 的那些“特色功能”了。</p>
+<p><a href="#%E5%AE%89%E8%A3%85%E5%90%8E%E6%81%A2%E5%A4%8Dzsh">配置工作</a>我们待切换完成后再讲。</p>
+<h2 id="重构-GRUB-启动菜单"><a href="#重构-GRUB-启动菜单" class="headerlink" title="重构 GRUB 启动菜单"></a>重构 GRUB 启动菜单</h2><p>由于我们重新安装了新内核，我们需要同步重构 GRUB 的配置文件 <code>grub.cfg</code>，以确保顺利引导。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo grub-mkconfig -o /boot/grub/grub.cfg<br></code></pre></td></tr></table></figure>
+
+<h2 id="重启"><a href="#重启" class="headerlink" title="重启"></a>重启</h2><p>重新启动电脑，你会发现原来 Manjaro 的主题和壁纸都变成默认的了。恭喜你，你已经成功切换到 Arch Linux 系统！</p>
+<p>确认系统工作正常之后，就可以自行清理不需要的软件包或者 Manjaro 残留了。</p>
+<p><img src="/2024/02/03/migrating-from-manjaro-to-arch/arch-finish.png" srcset="/img/loading.gif" lazyload alt="全部完成后"></p>
+<p>如果不需要配置 Manjaro 原来的 Zsh，就可以结束了。如果需要恢复 Manjaro 原来的 Zsh 功能，请继续往下看。</p>
+<h2 id="Zsh-配置"><a href="#Zsh-配置" class="headerlink" title="Zsh 配置"></a>Zsh 配置</h2><p>为什么把 Zsh 配置放最后讲呢，一个是比较复杂，另一个是确保系统基本组件正常运转后，再去做这些锦上添花的工作比较保险。</p>
+<p>Manjaro 的 Zsh 的一些快捷功能是由以下软件包实现的，它们不属于 Manjaro 本身。</p>
+<table>
+<thead>
+<tr>
+<th align="center">软件包</th>
+<th align="center">功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><code>oh-my-zsh</code></td>
+<td align="center">Zsh 高效配置框架</td>
+</tr>
+<tr>
+<td align="center"><code>oh-my-zsh-powerline-theme-git</code></td>
+<td align="center">Powerline 主题</td>
+</tr>
+<tr>
+<td align="center"><code>zsh-syntax-highlighting</code></td>
+<td align="center">语法高亮</td>
+</tr>
+<tr>
+<td align="center"><code>zsh-autosuggestions</code></td>
+<td align="center">自动补全</td>
+</tr>
+</tbody></table>
+<p>把这些软件包安装之后重新配置，即可使用相似功能。<del>（可我还是喜欢 Manjaro 绿油油的主题）</del></p>
+<h3 id="配置-Arch-Linux-CN-源"><a href="#配置-Arch-Linux-CN-源" class="headerlink" title="配置 Arch Linux CN 源"></a>配置 Arch Linux CN 源</h3><p>虽说这些安装包都可以从 AUR 上获取，但是 Arch Linux CN 源为我们提供了已经打包好的软件包，可以通过 Pacman 直接拉取，快捷高效。</p>
+<p>编辑 <code>/etc/pacman.conf</code>，在文件末尾添加 Arch Linux CN 源。我这里选择的是科大镜像：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs conf">[archlinuxcn]<br>Server = https://mirrors.ustc.edu.cn/archlinuxcn/$arch<br></code></pre></td></tr></table></figure>
+
+<p>然后安装软件源 Keyring：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo pacman -S archlinuxcn-keyring<br></code></pre></td></tr></table></figure>
+
+<div class="note note-info">
+            <p>如果遇到错误，可以参考<a target="_blank" rel="noopener" href="https://www.archlinuxcn.org/archlinuxcn-keyring-manually-trust-farseerfc-key/">此篇文章</a>。</p>
+          </div>
+
+<h3 id="安装软件包"><a href="#安装软件包" class="headerlink" title="安装软件包"></a>安装软件包</h3><p>执行以下命令安装相关软件包。相比于 Powerline 主题，我更喜欢 Powerlevel 10K 这个主题，风格几乎一模一样但性能更好。所以我选择安装 Powerlevel 10K 主题。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo pacman -S zsh-theme-powerlevel10k oh-my-zsh-git zsh-syntax-highlighting zsh-autosuggestions<br></code></pre></td></tr></table></figure>
+
+<h3 id="配置-zshrc"><a href="#配置-zshrc" class="headerlink" title="配置 .zshrc"></a>配置 <code>.zshrc</code></h3><p>复制新的 <code>.zshrc</code> 配置文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">mv</span> ~/.zshrc ~/.zshrc.old    <span class="hljs-comment"># 备份原来的文件</span><br><span class="hljs-built_in">cp</span> /usr/share/oh-my-zsh/zshrc ~/.zshrc<br></code></pre></td></tr></table></figure>
+
+<p>然后编辑 <code>~/.zshrc</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># ZSH_THEME 这一行修改如下</span><br>ZSH_THEME=<span class="hljs-string">&quot;powerlevel10k/powerlevel10k&quot;</span><br><br><span class="hljs-comment"># 这一行去掉注释</span><br>ENABLE_CORRECTION=<span class="hljs-string">&quot;true&quot;</span><br><br><span class="hljs-comment"># plugins 这一行，添加以下两个插件</span><br>plugins=(zsh-syntax-highlighting zsh-autosuggestions)<br><span class="hljs-comment"># 其他插件如果有也保留</span><br></code></pre></td></tr></table></figure>
+
+<p>然后将插件链接到正确的目录下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo <span class="hljs-built_in">ln</span> -s /usr/share/zsh/plugins/zsh-syntax-highlighting /usr/share/oh-my-zsh/custom/plugins/<br><br>sudo <span class="hljs-built_in">ln</span> -s /usr/share/zsh/plugins/zsh-autosuggestions /usr/share/oh-my-zsh/custom/plugins/<br><br>sudo <span class="hljs-built_in">ln</span> -s /usr/share/zsh-theme-powerlevel10k /usr/share/oh-my-zsh/themes<br><br>sudo <span class="hljs-built_in">mv</span> /usr/share/oh-my-zsh/themes/zsh-theme-powerlevel10k /usr/share/oh-my-zsh/themes/powerlevel10k<br></code></pre></td></tr></table></figure>
+
+<p>然后执行 <code>source ~/.zshrc</code> 并根据向导配置即可。</p>
+<p><img src="/2024/02/03/migrating-from-manjaro-to-arch/zsh-conf-neofetch.png" srcset="/img/loading.gif" lazyload alt="配置完成后的样式，还是很好看的，自动补全和语法高亮也生效了"></p>
+<p>完成后可以将默认 Shell 切换到 Zsh。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">chsh -s /bin/zsh<br></code></pre></td></tr></table></figure>
+
+<div class="note note-warning">
+            <p>Root 用户的 Shell <strong>应当设定为 Bash</strong> 而不是 Zsh 等其他 Shell。我也不建议更改 Root 用户的 Shell。</p>
+          </div>
+
+<p>就这样。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%8A%80%E6%9C%AF/" class="category-chain-item">技术</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Linux/" class="print-no-link">#Linux</a>
+      
+        <a href="/tags/GNU-Linux/" class="print-no-link">#GNU/Linux</a>
+      
+        <a href="/tags/Manjaro/" class="print-no-link">#Manjaro</a>
+      
+        <a href="/tags/Arch-Linux/" class="print-no-link">#Arch Linux</a>
+      
+        <a href="/tags/%E7%B3%BB%E7%BB%9F%E5%88%87%E6%8D%A2/" class="print-no-link">#系统切换</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>不重装系统，直接从 Manjaro 切换到 Arch Linux</div>
+      <div>https://gt610.codeberg.page/2024/02/03/migrating-from-manjaro-to-arch/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>GT610</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年2月3日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/02/04/redmi-2-flashing/" title="红米手机 2 刷机资源 / 教程">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">红米手机 2 刷机资源 / 教程</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/02/02/bignum-cpp/" title="C++ 高精度运算 学习记录">
+                        <span class="hidden-mobile">C++ 高精度运算 学习记录</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  <script>
+  Fluid.utils.createScript('https://lib.baomitu.com/mermaid/8.14.0/mermaid.min.js', function() {
+    mermaid.initialize({"theme":"default"});
+
+    Fluid.utils.listenDOMLoaded(function() {
+      Fluid.events.registerRefreshCallback(function() {
+        if ('mermaid' in window) {
+          mermaid.init();
+        }
+      });
+    });
+  });
+</script>
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,726 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="GT610">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="最近在看《通过例子学 Rust》，真切感受到了 Rust 有多么难学设计有多么精巧。作为一门安全性和效率优先的编程语言，Rust 的语法个人感觉是半 C 半 Python，但结构上明显比二者都复杂。 在写第一个语句  1println!(&quot;Hello, world!&quot;);  的时候，我很好奇为什么 println 后面要加一个感叹号 !。查阅后得知，这是一种 Rust 宏。 什">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rust 宏 学习笔记">
+<meta property="og:url" content="https://gt610.codeberg.page/2024/03/28/rust-macro/index.html">
+<meta property="og:site_name" content="GT610&#39;s repository">
+<meta property="og:description" content="最近在看《通过例子学 Rust》，真切感受到了 Rust 有多么难学设计有多么精巧。作为一门安全性和效率优先的编程语言，Rust 的语法个人感觉是半 C 半 Python，但结构上明显比二者都复杂。 在写第一个语句  1println!(&quot;Hello, world!&quot;);  的时候，我很好奇为什么 println 后面要加一个感叹号 !。查阅后得知，这是一种 Rust 宏。 什">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-03-28T09:04:56.000Z">
+<meta property="article:modified_time" content="2024-03-28T09:04:56.464Z">
+<meta property="article:author" content="GT610">
+<meta property="article:tag" content="Rust 语言">
+<meta property="article:tag" content="宏">
+<meta property="article:tag" content="macro">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Rust 宏 学习笔记 - GT610&#39;s repository</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_4430671_lkk4qpja1mj.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"gt610.codeberg.page","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>GT610&#39;s repository</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Rust 宏 学习笔记"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-03-28 17:04" pubdate>
+          2024年3月28日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          21 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Rust 宏 学习笔记</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>最近在看《通过例子学 Rust》，真切感受到了 Rust <del>有多么难学</del>设计有多么精巧。作为一门安全性和效率优先的编程语言，Rust 的语法个人感觉是半 C 半 Python，但结构上明显比二者都复杂。</p>
+<p>在写第一个语句 </p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;Hello, world!&quot;</span>);<br></code></pre></td></tr></table></figure>
+
+<p>的时候，我很好奇为什么 <code>println</code> 后面要加一个感叹号 <code>!</code>。查阅后得知，这是一种 Rust <strong>宏</strong>。</p>
+<h2 id="什么是宏？"><a href="#什么是宏？" class="headerlink" title="什么是宏？"></a>什么是宏？</h2><p>在 Rust 中，<em>宏（macros）</em> 是一种<strong>元编程的工具</strong>，允许你在编译时<strong>对代码进行模式匹配、转换和生成</strong>。宏允许你编写一些特定的代码模板，在编译时根据这些模板生成具体的代码。这使得你可以编写更加灵活、通用和高效的代码。</p>
+<p>其实说得简单点，这个宏和 C&#x2F;C++ 中的宏定义是一个性质的，起到<strong>片段替换</strong>的一个作用。</p>
+<p>Rust 中的宏有两种宏：<strong>声明式宏</strong>、<strong>过程宏</strong>。</p>
+<h2 id="声明式宏（declarative-macros）"><a href="#声明式宏（declarative-macros）" class="headerlink" title="声明式宏（declarative macros）"></a>声明式宏（declarative macros）</h2><p>声明式宏也称为 <em><code>macro_rules!</code> 宏</em>，它允许你定义模式和替换规则，用于在代码中执行简单的文本替换。声明式宏类似于 C 语言中的宏替换，但更加强大和类型安全。声明式宏可以使用模式匹配、重复、递归等功能来定义宏，并且可以在宏中执行一些基本的代码转换。</p>
+<p>声明式宏，顾名思义，是可以<strong>由用户自己声明的</strong>，声明时也可以调用其他已经声明好的宏。</p>
+<p>比如我声明一个 <code>say_hello</code> 宏，让它去固定输出 <code>Hello, World!</code>：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-built_in">macro_rules!</span> say_hello &#123;<br>    () =&gt; &#123;<br>        <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;Hello, World!&quot;</span>);<br>    &#125;;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>然后我需要使用的时候，就这样子调用：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-keyword">fn</span> <span class="hljs-title function_">main</span>() &#123;<br>    say_hello!();<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>执行结果就是这样的：</p>
+<figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs autohotkey"><span class="hljs-built_in">Hello,</span> World!<br></code></pre></td></tr></table></figure>
+
+<h3 id="对比：Rust-声明式宏-vs-C-语言宏定义"><a href="#对比：Rust-声明式宏-vs-C-语言宏定义" class="headerlink" title="对比：Rust 声明式宏 vs C 语言宏定义"></a>对比：Rust 声明式宏 vs C 语言宏定义</h3><ol>
+<li><p>模式匹配和重复</p>
+<p> Rust 的声明式宏允许使用<strong>模式匹配和重复</strong>来定义更复杂的模板。你可以使用 <code>match</code>、<code>if</code>、<code>for</code> 等语法来对输入的 <code>token</code> 流进行匹配和处理。</p>
+ <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-built_in">macro_rules!</span> print_range &#123;<br>    ($start:expr, $end:expr) =&gt; &#123;<br>        <span class="hljs-keyword">for</span> <span class="hljs-variable">i</span> <span class="hljs-keyword">in</span> $start..$end &#123;<br>            <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;&#123;&#125;&quot;</span>, i);<br>        &#125;<br>    &#125;;<br>&#125;<br><br>print_range!(<span class="hljs-number">1</span>, <span class="hljs-number">5</span>);<br></code></pre></td></tr></table></figure>
+
+<p> 我可以直接在声明宏里面使用一个 for 循环，编译器预处理时候也知道这是个 for 循环。其实宏做到这样子，我个人感觉已经很接近函数了。</p>
+<p> C 语言的宏定义也支持简单的模式匹配和重复，但功能相对受限，<strong>只能进行简单的文本替换和展开</strong>。</p>
+ <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">define</span> PRINT_RANGE(start, end) \</span><br><span class="hljs-meta">for (int i = start; i &lt; end; i++) &#123; \</span><br><span class="hljs-meta">    printf(<span class="hljs-string">&quot;%d\n&quot;</span>, i); \</span><br><span class="hljs-meta">&#125;</span><br><br>PRINT_RANGE(<span class="hljs-number">1</span>, <span class="hljs-number">5</span>);<br></code></pre></td></tr></table></figure>
+
+<p> 预处理的时候，编译器并不知道这个宏定义里面的语句是一个 for 循环。它只知道预处理的时候等价替换就是的了。</p>
+<p> 这样看来 Rust 的声明宏确实要更加灵活，我感觉已经可以成为半个函数了。</p>
+</li>
+<li><p>类型安全和错误检查：</p>
+<p> Rust 的声明式宏在编译时可以进行类型检查和错误检查，可以避免一些常见的错误。</p>
+ <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-built_in">macro_rules!</span> divide &#123;<br>    ($numerator:expr, <span class="hljs-number">0</span>) =&gt; &#123;<br>        <span class="hljs-built_in">panic!</span>(<span class="hljs-string">&quot;division by zero&quot;</span>);<br>    &#125;;<br>    ($numerator:expr, $denominator:expr) =&gt; &#123;<br>        $numerator / $denominator<br>    &#125;;<br>&#125;<br><br><span class="hljs-keyword">let</span> <span class="hljs-variable">result</span> = divide!(<span class="hljs-number">10</span>, <span class="hljs-number">0</span>);<br></code></pre></td></tr></table></figure>
+
+<p> C 语言的宏定义没有类型检查和错误检查，需要自己去写，像这样一个除数为 0 的简单情况，如果不做处理，可能会导致一些潜在的错误。</p>
+ <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">define</span> DIVIDE(numerator, denominator) \</span><br><span class="hljs-meta">(denominator == 0 ? (fprintf(stderr, <span class="hljs-string">&quot;division by zero\n&quot;</span>), exit(EXIT_FAILURE), 0) : (numerator / denominator))</span><br><br><span class="hljs-type">int</span> result = DIVIDE(<span class="hljs-number">10</span>, <span class="hljs-number">0</span>);<br></code></pre></td></tr></table></figure>
+<p> 其实这个问题还是比较像第一条的，对于一些小的代码片段，也许我们不会太关注这个问题，但是一旦项目比较大，类型检查和错误检查就比较重要了。</p>
+</li>
+<li><p>代码生成和抽象：</p>
+<p> Rust 的声明式宏可以生成更复杂和灵活的代码，允许对输入进行更多的操作和转换。</p>
+ <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-built_in">macro_rules!</span> vec_of_strings &#123;<br>    ($($elem:expr),*) =&gt; &#123;<br>        <span class="hljs-built_in">vec!</span>[$($elem.<span class="hljs-title function_ invoke__">to_string</span>()),*]<br>    &#125;;<br>&#125;<br><br><span class="hljs-keyword">let</span> <span class="hljs-variable">v</span> = vec_of_strings![<span class="hljs-string">&quot;hello&quot;</span>, <span class="hljs-string">&quot;world&quot;</span>];<br></code></pre></td></tr></table></figure>
+
+
+<p> C 语言的宏定义主要用于文本替换，功能相对较弱，难以实现复杂的代码生成和抽象。</p>
+ <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">define</span> VEC_OF_STRINGS(elem1, elem2) \</span><br><span class="hljs-meta">&#123;elem1, elem2&#125;</span><br><br><span class="hljs-type">const</span> <span class="hljs-type">char</span>* v[] = VEC_OF_STRINGS(<span class="hljs-string">&quot;hello&quot;</span>, <span class="hljs-string">&quot;world&quot;</span>);<br></code></pre></td></tr></table></figure></li>
+</ol>
+<p>其实这几条说到底也就是， Rust 的声明宏不像 C 的宏替换那样就是个简单的文本替换，它的功能更加丰富。</p>
+<h2 id="过程宏（procedural-macros）"><a href="#过程宏（procedural-macros）" class="headerlink" title="过程宏（procedural macros）"></a>过程宏（procedural macros）</h2><p>过程宏通常以<strong>函数</strong>的形式定义，并接收一个或多个输入 token 流，然后根据这些输入生成新的代码。过程宏可以在代码的语法树级别进行操作，因此可以实现更高级的代码转换和分析。</p>
+<p>过程宏分为三种类型：</p>
+<h3 id="属性宏-Attribute-Macros"><a href="#属性宏-Attribute-Macros" class="headerlink" title="属性宏 (Attribute Macros)"></a>属性宏 (Attribute Macros)</h3><p>属性宏允许你在代码上方使用类似于注解的语法来应用宏，比如</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-meta">#[derive(Debug)]</span><br></code></pre></td></tr></table></figure>
+<p>就是一个常见的属性宏，用于自动为结构体或枚举类型实现 <code>Debug</code> trait。</p>
+<h3 id="函数宏-Function-like-Macros"><a href="#函数宏-Function-like-Macros" class="headerlink" title="函数宏(Function-like Macros)"></a>函数宏(Function-like Macros)</h3><p>函数宏类似于声明式宏，但完全以<strong>函数</strong>的形式定义，可以更灵活地处理输入 token 流并生成代码。</p>
+<h3 id="自定义派生宏-Custom-Derive-Macros"><a href="#自定义派生宏-Custom-Derive-Macros" class="headerlink" title="自定义派生宏 (Custom Derive Macros)"></a>自定义派生宏 (Custom Derive Macros)</h3><p>自定义派生宏允许编写用于自动实现 trait 或其他行为的宏，使得你可以为类型自动生成通用的实现代码。</p>
+<p>刚刚提到的 <code>print!()</code> 就是一种过程宏。其实我也很好奇，几乎所有语言中，打印标准输出是被设计为一个<strong>函数</strong>的，而 Rust 为什么要采用宏这个设计方式。这个下文再聊。</p>
+<h2 id="为什么标准输出被定义为一个宏？"><a href="#为什么标准输出被定义为一个宏？" class="headerlink" title="为什么标准输出被定义为一个宏？"></a>为什么标准输出被定义为一个宏？</h2><p>我们先来看一下 Rust 源码中对 <code>print!()</code> 宏的定义：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-meta">#[macro_export]</span><br><span class="hljs-meta">#[stable(feature = <span class="hljs-string">&quot;rust1&quot;</span>, since = <span class="hljs-string">&quot;1.0.0&quot;</span>)]</span><br><span class="hljs-meta">#[cfg_attr(not(test), rustc_diagnostic_item = <span class="hljs-string">&quot;print_macro&quot;</span>)]</span><br><span class="hljs-meta">#[allow_internal_unstable(print_internals)]</span><br><span class="hljs-built_in">macro_rules!</span> print &#123;<br>    ($($arg:tt)*) =&gt; &#123;&#123;<br>        $crate::io::_print($crate::<span class="hljs-built_in">format_args!</span>($($arg)*));<br>    &#125;&#125;;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>至于为什么 print 是个宏，<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/67509637/what-benefits-are-there-with-making-println-a-macro">Stack Overflow</a> 上也有人提出了这个问题。我的理解是：</p>
+<ol>
+<li><p>避免移动语义问题</p>
+<p> 在 Rust 中，过程宏可以自动引用其参数，即使参数在调用宏的代码中已经被使用过，也<strong>不会产生移动语义的问题</strong>。这是因为过程宏在编译时<strong>操作代码的语法树</strong>，而不是在运行时处理值的拷贝和移动。</p>
+<p> 对于普通的函数或方法，参数的所有权传递是显式的，一旦参数被使用，它就会被移动并在后续代码中不可再用。</p>
+<p> 这实际上是一个 Rust 所有权的问题。在 Rust 中，当一个值被传递给一个函数或者移动到另一个变量时，它的<strong>所有权就会转移</strong>到接收它的函数或者变量上。这种所有权转移被称为<em>移动（move）</em>。一旦值的所有权被移动，原始变量将<strong>不能再继续使用</strong>它。</p>
+<p> 也就是说，每个变量对于函数来说，<strong>只能用一次</strong>。当你调用一个函数并将一个拥有所有权的值传递给它时，函数可能会<strong>消费</strong>这个值并且<strong>不能再继续使用</strong>它。这是为了<strong>确保内存安全</strong>和<strong>避免悬垂指针</strong>的问题而设计的。所有权的问题，以后我单写一篇文章讲。</p>
+<p> 我们以一个简单的日志记录为例，我们先用过程宏去实现：</p>
+ <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-built_in">macro_rules!</span> log &#123;<br>    ($level:expr, $($arg:tt)*) =&gt; &#123;<br>        <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;&#123;&#125;: &#123;&#125;&quot;</span>, $level, <span class="hljs-built_in">format_args!</span>($($arg)*));<br>    &#125;;<br>&#125;<br><br><span class="hljs-keyword">fn</span> <span class="hljs-title function_">main</span>() &#123;<br>    <span class="hljs-keyword">let</span> <span class="hljs-variable">message</span> = <span class="hljs-string">&quot;An error occurred&quot;</span>.<span class="hljs-title function_ invoke__">to_string</span>();<br>    log!(<span class="hljs-string">&quot;ERROR&quot;</span>, <span class="hljs-string">&quot;Error message: &#123;&#125;&quot;</span>, message);<br>    <span class="hljs-comment">// 这里仍然可以继续使用 message</span><br>    <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;Continuing to use message: &#123;&#125;&quot;</span>, message);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p> 我们再用函数等价替换一下，看看会怎么样：</p>
+ <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs rust"><span class="hljs-keyword">fn</span> <span class="hljs-title function_">log</span>(level: &amp;<span class="hljs-type">str</span>, message: <span class="hljs-type">String</span>) &#123;<br>    <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;&#123;&#125;: &#123;&#125;&quot;</span>, level, message);<br>&#125;<br><br><span class="hljs-keyword">fn</span> <span class="hljs-title function_">main</span>() &#123;<br>    <span class="hljs-keyword">let</span> <span class="hljs-variable">message</span> = <span class="hljs-string">&quot;An error occurred&quot;</span>.<span class="hljs-title function_ invoke__">to_string</span>();<br>    <span class="hljs-title function_ invoke__">log</span>(<span class="hljs-string">&quot;ERROR&quot;</span>, message.<span class="hljs-title function_ invoke__">clone</span>());<br>    <span class="hljs-comment">// 尝试在此处继续使用 message</span><br>    <span class="hljs-built_in">println!</span>(<span class="hljs-string">&quot;Continuing to use message: &#123;&#125;&quot;</span>, message);<br>&#125;<br></code></pre></td></tr></table></figure>
+<p> 因为 <code>log</code> 函数会获取 <code>message</code> 的所有权，所以在函数调用之后，<code>message</code> 将被移动，导致后续的使用产生<strong>编译错误</strong>。而使用过程宏的情况下，由于参数的传递是基于宏的文本替换，并不会导致所有权的转移，因此后续对 <code>message</code> 的使用不会产生问题。</p>
+<p> 很显然，几乎所有的场景下，标准输出都是需要重复输出一些变量内容的，那么你也只能使用过程宏，而不能用一次性的函数。</p>
+</li>
+<li><p>接受任意数量的参数</p>
+<p> 过程宏可以接受<strong>任意数量</strong>的参数，这使得它们更加灵活和通用。你可以编写接受任意数量参数的宏来处理不同的场景。</p>
+<p> 而普通函数或方法的参数数量是<strong>固定</strong>的，若用函数实现，要么需要为每种情况都编写不同的函数或方法，要么想尽办法把各种情况转换成统一参数数量和格式的形式。</p>
+</li>
+<li><p>编译前就进行格式验证</p>
+<p> 过程宏可以在编译时<strong>验证格式字符串和参数的匹配</strong>，不匹配就不编译通过。C 语言中的 <code>printf</code> 函数在运行时才检查，运行的时候万一不匹配或者出现意料之外的结果，就很可能导致运行时出现 bug。</p>
+</li>
+</ol>
+<p>当然这些只是 Rust 宏的一个很基础的部分，还有很多东西需要学习。很多东西也只是我自己的一个理解，如果这篇文章有什么错误或者不足，欢迎友好指出。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Rust-%E8%AF%AD%E8%A8%80/" class="print-no-link">#Rust 语言</a>
+      
+        <a href="/tags/%E5%AE%8F/" class="print-no-link">#宏</a>
+      
+        <a href="/tags/macro/" class="print-no-link">#macro</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Rust 宏 学习笔记</div>
+      <div>https://gt610.codeberg.page/2024/03/28/rust-macro/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>GT610</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年3月28日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/03/27/ncre-2-1903/" title="2019 年 3 月 计算机二级 C 语言 错题整理">
+                        <span class="hidden-mobile">2019 年 3 月 计算机二级 C 语言 错题整理</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  <script>
+  Fluid.utils.createScript('https://lib.baomitu.com/mermaid/8.14.0/mermaid.min.js', function() {
+    mermaid.initialize({"theme":"default"});
+
+    Fluid.utils.listenDOMLoaded(function() {
+      Fluid.events.registerRefreshCallback(function() {
+        if ('mermaid' in window) {
+          mermaid.init();
+        }
+      });
+    });
+  });
+</script>
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
